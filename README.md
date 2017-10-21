@@ -6,7 +6,7 @@ Usage:<br>
 Packageify puts files that were originally all in the same folder in organized packages based on input information.
 
 Program arguments:
-(path to folder with all java files) (package definition txt file) (output folder)
+java -jar package-ify <path to folder with all java files> <package definition txt file> <output folder>
 
 Example of package definition file:<br>
 AnimatedSprite;com.marcusman.graphics<br>
@@ -23,4 +23,4 @@ RenderHandler;com.marcusman.graphics<br>
 SDKButton;com.marcusman.graphics.gui<br>
 Sprite;com.marcusman.graphics<br>
 SpriteSheet;com.marcusman.graphics<br>
-Tiles;com.marcusman.logic<br>
+Tiles;com.marcusman.logic
