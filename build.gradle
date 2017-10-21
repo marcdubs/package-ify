@@ -32,6 +32,16 @@ run {
 	args 'A:/Owncloud/Projects/Videos/Lesson 16/Workspace','A:/Owncloud/Projects/Videos/Lesson 16/Packages.txt','A:/Owncloud/Projects/Videos/Lesson 16/WorkspacePackagified'
 }
 
+jar {
+	manifest {
+		attributes 'Main-Class': 'com.marcusman.packageify.Packageify'
+	}
+}
+
+javadoc {
+	options.memberLevel = JavadocMemberLevel.PRIVATE
+}
+
 // Define the main class for the application
 mainClassName = 'com.marcusman.packageify.Packageify'
 
