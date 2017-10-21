@@ -52,6 +52,7 @@ public class Packageify {
 	/**
 	* Packageify the given directory with the description given above.
 	* @param args args[0] = inputFolder args[1] = definitionFile args[2] = outputFolder.
+	* @throws Exception which could be IOException or IllegalArgumentException
 	*/
 	public Packageify(String[] args) throws Exception {
 		if(args.length < 3)
@@ -71,7 +72,8 @@ public class Packageify {
 	}
 
 	/**
-	* Copy all non-java files from the inputDir to the outputDir
+	* Copy all non-java files from the inputDir to the outputDir.
+	* @throws IOException if inputFile doesn't exist or copying goes awry.
 	*/
 	private void copyNonJavaFiles() throws IOException {
 		File[] files = inputFolder.listFiles();
@@ -90,6 +92,7 @@ public class Packageify {
 	* their package directories and put the package definition at the top of the file.
 	* Also try to add imports to other classes that have been packageified if they
 	* are found to be used in this class.
+	* @throws IOException if there was a problem reading, writing, or copying files.
 	*/
 	private void putFilesIntoPackageFolders() throws IOException {
 		for(int i = 0; i < packagedFiles.size(); i++) {
@@ -160,6 +163,7 @@ public class Packageify {
 	/**
 	* Initialize and fill in our packagedFiles ArrayList with the information
 	* provided in the individual lines of the definition file.
+	* @throws IOException if there is a formatting problem with the file or a read error.
 	*/
 	private void createPackagedFilesList() throws IOException {
 		packagedFiles = new ArrayList<PackagedFile>();
