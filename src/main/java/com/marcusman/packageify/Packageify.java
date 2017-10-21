@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
-* Packageify puts files that were originally all in the same folder.
+* Packageify puts files that were originally all in the same folder
 * in organized packages based on input information.
 *
 * <pre>
@@ -68,6 +68,8 @@ public class Packageify {
 		createPackagedFilesList();
 		putFilesIntoPackageFolders();
 		copyNonJavaFiles();
+
+		System.out.println("Successfully packageified input files!");
 
 	}
 
