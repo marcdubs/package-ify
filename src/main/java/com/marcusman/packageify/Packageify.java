@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -64,14 +65,31 @@ public class Packageify {
 		validateFiles();
 
 		createPackagedFilesList();
-
 		putFilesIntoPackageFolders();
+		copyNonJavaFiles();
 
 	}
 
 	/**
-	* Copies all of the java files in the input directory into the output directory under
-	* their package directories and puts the package definition at the top of the file.
+	* Copy all non-java files from the inputDir to the outputDir
+	*/
+	private void copyNonJavaFiles() throws IOException {
+		File[] files = inputFolder.listFiles();
+
+		for(int i = 0; i < files.length; i++) {
+			File file = files[i];
+			if(!file.getName().endsWith(".java"))
+				Files.copy(file.toPath(),
+						   new File(outputFolder + "/" + file.getName()).toPath(),
+						   StandardCopyOption.REPLACE_EXISTING);
+		}
+	}
+
+	/**
+	* Copy all of the java files in the input directory into the output directory under
+	* their package directories and put the package definition at the top of the file.
+	* Also try to add imports to other classes that have been packageified if they
+	* are found to be used in this class.
 	*/
 	private void putFilesIntoPackageFolders() throws IOException {
 		for(int i = 0; i < packagedFiles.size(); i++) {
@@ -97,8 +115,12 @@ public class Packageify {
 				line = br.readLine();
 			}
 
+			String inserts = packagedFile.getPackageDefinition() + "\n\n";
+
+			inserts += getPackagedImports(packagedFile, sb.toString());
+
 			//Add package definition to beginning of file string
-			sb.insert(0, packagedFile.getPackageDefinition() + "\n");
+			sb.insert(0, inserts);
 			fis.close();
 
 			//Output file string to new file
@@ -106,6 +128,33 @@ public class Packageify {
 			fos.write(sb.toString().getBytes());
 			fos.flush();
 		}
+	}
+
+	/**
+	* Find the usage of other packaged files in this one and return a string of imports
+	* if any given packaged file is in use.
+	* @param consideredFile The packaged file we are considering.
+	* @param fileString The packaged file we are considering in string form.
+	* @return a string with \n separated import statements.
+	*/
+	private String getPackagedImports(PackagedFile consideredFile, String fileString) {
+		String imports = "";
+
+		//Get the file without quotes.
+		String withoutQuotes = fileString.replaceAll("\".*?\"|\'.*?\'|`.*`", "");
+
+		for(int i = 0; i < packagedFiles.size(); i++) {
+			PackagedFile packagedFile = packagedFiles.get(i);
+
+			if(packagedFile == consideredFile)
+				continue;
+
+			if(withoutQuotes.contains(packagedFile.className)) {
+				imports += "import " + packagedFile.path + "." + packagedFile.className + ";\n";
+			}
+		}
+
+		return imports;
 	}
 
 	/**
